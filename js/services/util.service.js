@@ -8,7 +8,8 @@ export const utilService = {
     elapsedTime,
     getColors,
     updateQueryParams,
-    getDistance
+    getDistance,
+    showDeleteConfirmation
 }
 
 function saveToStorage(key, value) {
@@ -57,13 +58,13 @@ function elapsedTime(pastMs) {
     const now = new Date()
     const secondsPast = Math.round((now - pastMs) / 1000)
 
-    if (secondsPast < 60 * 5) return `just now` 
-    
+    if (secondsPast < 60 * 5) return `just now`
+
     const minutesPast = Math.floor(secondsPast / 60)
-    if (minutesPast < 60) return `last hour` 
+    if (minutesPast < 60) return `last hour`
 
     const hoursPast = Math.floor(minutesPast / 60)
-    if (hoursPast < 24)  return `today` 
+    if (hoursPast < 24) return `today`
 
     return `${Math.floor(hoursPast / 24)} days ago`
 
@@ -71,27 +72,27 @@ function elapsedTime(pastMs) {
 
 function updateQueryParams(queryParamsObj) {
     var queryParams = `?`
-    for (let paramName in queryParamsObj){
+    for (let paramName in queryParamsObj) {
         if (queryParamsObj[paramName] !== undefined) {
             queryParams += `${paramName}=${queryParamsObj[paramName]}&`
         }
     }
-    queryParams = queryParams.substring(0, queryParams.length-1)
+    queryParams = queryParams.substring(0, queryParams.length - 1)
     const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + queryParams
     window.history.pushState({ path: newUrl }, '', newUrl)
 }
 
 function getColors() {
     return ['#F44336',
-    '#FFEBEE',
-    // '#FFCDD2',
-    '#EF9A9A',
-    '#E57373',
-    '#EF5350',
-    '#F44336',
-    '#E53935',
-    '#D32F2F',
-    '#C62828']    
+        '#FFEBEE',
+        // '#FFCDD2',
+        '#EF9A9A',
+        '#E57373',
+        '#EF5350',
+        '#F44336',
+        '#E53935',
+        '#D32F2F',
+        '#C62828']
 }
 
 function getDistance(latLng1, latLng2, unit) {
@@ -116,4 +117,41 @@ function getDistance(latLng1, latLng2, unit) {
         dist = +dist.toFixed(2)
         return dist
     }
+}
+
+export function showDeleteConfirmation() {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: true
+    })
+
+    return swalWithBootstrapButtons.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this location!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
+    })
+    .then((result) => {
+        if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "Your location has been deleted.",
+                icon: "success"
+            });
+            return true
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelled",
+                text: "Your location is safe :)",
+                icon: "error"
+            })
+            return false
+        }
+    })
 }
