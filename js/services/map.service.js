@@ -5,11 +5,12 @@ export const mapService = {
     setMarker,
     panTo,
     lookupAddressGeo,
-    addClickListener
+    addClickListener,
+    showLocationModal
 }
 
 // TODO: Enter your API Key
-const API_KEY = 'AIzaSyDgBX8uE1ERJZBG1OdqM2ObFvubGCkbxp4'
+const API_KEY = 'AIzaSyCIeim12o_0MqzRF0ZrjwrfOnFSupFXthE'
 var gMap
 var gMarker
 
@@ -24,7 +25,7 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
         })
 }
 
-function panTo({lat, lng, zoom=15}) {
+function panTo({ lat, lng, zoom = 15 }) {
     const laLatLng = new google.maps.LatLng(lat, lng)
     gMap.panTo(laLatLng)
     gMap.setZoom(zoom)
@@ -45,7 +46,7 @@ function lookupAddressGeo(geoOrAddress) {
             // console.log('RES IS', res)
             if (!res.results.length) return new Error('Found nothing')
             res = res.results[0]
-            const {formatted_address, geometry} = res
+            const { formatted_address, geometry } = res
 
             const geo = {
                 address: formatted_address.substring(formatted_address.indexOf(' ')).trim(),
@@ -101,5 +102,35 @@ function _connectGoogleApi() {
     return new Promise((resolve, reject) => {
         elGoogleApi.onload = resolve
         elGoogleApi.onerror = () => reject('GoogleMaps script failed to load')
+    })
+}
+
+function showLocationModal(loc = { rate: '', name: '' }) {
+    return Swal.fire({
+        title: loc.rate === 0 ? 'Add New Location' : 'Update Location',
+        html: `
+            <label>Loc Name:</label>  
+            <input class="swal2-input" value="${loc.name}">
+            <label>Rate:</label>  
+            <input class="swal2-input" type="number" min="1" max="5" value="${loc.rate}">
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: loc.rate === 0 ? 'Add' : 'Update',
+        cancelButtonText: 'Cancel',
+        
+        preConfirm: () => {
+            const popup = Swal.getPopup()
+            const inputs = popup.querySelectorAll('.swal2-input')
+            const name = inputs[0].value.trim() || loc.name
+            const rate = Number(inputs[1].value) || loc.rate || 1
+
+            if (rate < 1 || rate > 5) {
+                Swal.showValidationMessage('Rate must be a number between 1 and 5')
+                return false
+            }
+
+            return { name, rate }
+        }
     })
 }
