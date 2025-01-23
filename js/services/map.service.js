@@ -1,18 +1,21 @@
 
 export const mapService = {
     initMap,
-    getUserPosition,
+    fetchUserPosition,
     setMarker,
     panTo,
     lookupAddressGeo,
     addClickListener,
-    showLocationModal
+    showLocationModal,
+    getUserPosition,
+    setUserPosition
 }
 
 // TODO: Enter your API Key
 const API_KEY = 'AIzaSyCIeim12o_0MqzRF0ZrjwrfOnFSupFXthE'
 var gMap
 var gMarker
+var gUserPos = null
 
 function initMap(lat = 32.0749831, lng = 34.9120554) {
     return _connectGoogleApi()
@@ -78,7 +81,7 @@ function setMarker(loc) {
 }
 
 // This function provides a Promise API to the callback-based-api of getCurrentPosition
-function getUserPosition() {
+function fetchUserPosition() {
     return new Promise((resolve, reject) => {
         function onSuccess(res) {
             const latLng = {
@@ -89,6 +92,14 @@ function getUserPosition() {
         }
         navigator.geolocation.getCurrentPosition(onSuccess, reject)
     })
+}
+
+function getUserPosition() {
+    return gUserPos
+}
+
+function setUserPosition(userPos) {
+    gUserPos = userPos
 }
 
 function _connectGoogleApi() {
