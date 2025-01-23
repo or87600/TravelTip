@@ -51,7 +51,8 @@ export const locService = {
     save,
     setFilterBy,
     setSortBy,
-    getLocCountByRateMap
+    getLocCountByRateMap,
+    getLocCountByLastUpdatedMap
 }
 
 export const mapService = {
@@ -88,4 +89,35 @@ Here is a sample usage:
 <button onclick="app.onShareLoc()">Share location</button>
 ```
 
+## Project Structure
 
+```
+.vscode/
+    settings.json
+css/
+    base/
+        base.css
+        vars.css
+    cmps/
+        locs.css
+        selected-loc.css
+        user-msg.css
+    main.css
+img/
+index.html
+js/
+    app.controller.js
+    services/
+        async-storage.service.js
+        loc.service.js
+        map.service.js
+        util.service.js
+README.md
+```
+
+## Getting Started
+
+1. Clone the repository.
+2. Open the project in Visual Studio Code.
+3. Open the terminal and run a local server (e.g., using the Live Server extension).
+4. Open index.html in your browser.
