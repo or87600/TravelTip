@@ -8,8 +8,7 @@ export const utilService = {
     elapsedTime,
     getColors,
     updateQueryParams,
-    getDistance,
-    showDeleteConfirmation
+    getDistance
 }
 
 function saveToStorage(key, value) {
@@ -117,41 +116,4 @@ function getDistance(latLng1, latLng2, unit) {
         dist = +dist.toFixed(2)
         return dist
     }
-}
-
-export function showDeleteConfirmation() {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: "btn btn-success",
-            cancelButton: "btn btn-danger"
-        },
-        buttonsStyling: true
-    })
-
-    return swalWithBootstrapButtons.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this location!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
-        reverseButtons: true
-    })
-    .then((result) => {
-        if (result.isConfirmed) {
-            swalWithBootstrapButtons.fire({
-                title: "Deleted!",
-                text: "Your location has been deleted.",
-                icon: "success"
-            });
-            return true
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire({
-                title: "Cancelled",
-                text: "Your location is safe :)",
-                icon: "error"
-            })
-            return false
-        }
-    })
 }

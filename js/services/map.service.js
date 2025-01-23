@@ -115,33 +115,3 @@ function _connectGoogleApi() {
         elGoogleApi.onerror = () => reject('GoogleMaps script failed to load')
     })
 }
-
-function showLocationModal(loc = { rate: '', name: '' }) {
-    return Swal.fire({
-        title: loc.rate === 0 ? 'Add New Location' : 'Update Location',
-        html: `
-            <label>Loc Name:</label>  
-            <input class="swal2-input" value="${loc.name}">
-            <label>Rate:</label>  
-            <input class="swal2-input" type="number" min="1" max="5" value="${loc.rate}">
-        `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: loc.rate === 0 ? 'Add' : 'Update',
-        cancelButtonText: 'Cancel',
-        
-        preConfirm: () => {
-            const popup = Swal.getPopup()
-            const inputs = popup.querySelectorAll('.swal2-input')
-            const name = inputs[0].value.trim() || loc.name
-            const rate = Number(inputs[1].value) || loc.rate || 1
-
-            if (rate < 1 || rate > 5) {
-                Swal.showValidationMessage('Rate must be a number between 1 and 5')
-                return false
-            }
-
-            return { name, rate }
-        }
-    })
-}

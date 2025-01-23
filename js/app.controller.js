@@ -77,7 +77,7 @@ function renderLocs(locs) {
 }
 
 function onRemoveLoc(locId) {
-    utilService.showDeleteConfirmation()
+    confirmDeleteModal()
         .then((isConfirmed) => {
             if (isConfirmed) {
                 locService.remove(locId)
@@ -108,7 +108,7 @@ function onSearchAddress(ev) {
 }
 
 function onAddLoc(geo) {
-    mapService.showLocationModal({ name: geo.address || '', rate: 0 })
+    handleLocationModal({ name: geo.address || '', rate: 0 })
         .then(result => {
             if (result.isConfirmed) {
                 const { name, rate } = result.value
@@ -155,7 +155,7 @@ function onPanToUserPos() {
 function onUpdateLoc(locId) {
     locService.getById(locId)
         .then(loc => {
-            mapService.showLocationModal(loc)
+            handleLocationModal(loc)
                 .then(result => {
                     if (result.isConfirmed) {
                         const updateLoc = result.value
@@ -350,4 +350,80 @@ function cleanStats(stats) {
         return acc
     }, [])
     return cleanedStats
+}
+
+function confirmDeleteModal() {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: true
+    })
+
+    return swalWithBootstrapButtons.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this location!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
+    })
+    .then((result) => {
+        if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "Your location has been deleted.",
+                icon: "success"
+            });
+            return true
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelled",
+                text: "Your location is safe :)",
+                icon: "error"
+            })
+            return false
+        }
+    })
+}
+
+function handleLocationModal(loc = { rate: '', name: '' }) {
+    return Swal.fire({
+        title: loc.rate === 0 ? 'Add New Location' : 'Update Location',
+        html: `
+            <div><label>Loc Name:</label></div>
+            <input class="swal2-input" value="${loc.name}">
+            
+            <div><label>Rate:</label></div>
+            <input class="swal2-input" type="number" min="1" max="5" value="${loc.rate}">
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonColor: 'darkslateblue',
+        cancelButtonColor: 'darkmagenta',
+        confirmButtonText: loc.rate === 0 ? 'Add' : 'Update',
+        cancelButtonText: 'Cancel',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+        },
+        
+        preConfirm: () => {
+            const popup = Swal.getPopup()
+            const inputs = popup.querySelectorAll('.swal2-input')
+            const name = inputs[0].value.trim() || loc.name
+            const rate = Number(inputs[1].value) || loc.rate || 1
+
+            if (rate < 1 || rate > 5) {
+                Swal.showValidationMessage('Rate must be a number between 1 and 5')
+                return false
+            }
+
+            return { name, rate }
+        }
+    })
 }
