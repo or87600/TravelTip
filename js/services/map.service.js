@@ -6,7 +6,6 @@ export const mapService = {
     panTo,
     lookupAddressGeo,
     addClickListener,
-    showLocationModal,
     getUserPosition,
     setUserPosition
 }
