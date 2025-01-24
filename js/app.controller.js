@@ -2,6 +2,7 @@ import { utilService } from './services/util.service.js'
 import { locService } from './services/loc.service.js'
 import { mapService } from './services/map.service.js'
 
+let currentRating = 0;
 window.onload = onInit
 
 // To make things easier in this project structure 
@@ -16,6 +17,9 @@ window.app = {
     onShareLoc,
     onSetSortBy,
     onSetFilterBy,
+    setRating,
+    resetStars,
+    highlightStars
 }
 
 function onInit() {
@@ -426,4 +430,28 @@ function handleLocationModal(loc = { rate: '', name: '' }) {
             return { name, rate }
         }
     })
+}
+
+function highlightStars(stars) {
+    const starElements = document.querySelectorAll('.star')
+    starElements.forEach((star, index) => {
+        if (index < stars) {
+            star.classList.add('filled')
+        } else {
+            star.classList.remove('filled')
+        }
+    })
+}
+
+function setRating(stars) {
+    currentRating = stars
+    document.querySelector('.star-rating-input').value = stars
+    highlightStars(stars)
+    
+    // send rate to service
+    onSetFilterBy({ minRate: stars })
+}
+
+function resetStars() {
+    highlightStars(currentRating)
 }

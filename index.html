@@ -38,9 +38,17 @@
                     <div>
                         <label>
                             Min Rate:
-                            <input name="filter-by-rate" type="range" min="0" max="5" value="0" class="filter-rate-range"
-                                onchange="this.title=this.value;app.onSetFilterBy({minRate: this.value})" />
+                            <div class="star-rating" onmouseleave="app.resetStars()"> 
+                                <span class="star" data-value="1" onmouseover="app.highlightStars(1)" onclick="app.setRating(1)">&#9733;</span>
+                                <span class="star" data-value="2" onmouseover="app.highlightStars(2)" onclick="app.setRating(2)">&#9733;</span>
+                                <span class="star" data-value="3" onmouseover="app.highlightStars(3)" onclick="app.setRating(3)">&#9733;</span>
+                                <span class="star" data-value="4" onmouseover="app.highlightStars(4)" onclick="app.setRating(4)">&#9733;</span>
+                                <span class="star" data-value="5" onmouseover="app.highlightStars(5)" onclick="app.setRating(5)">&#9733;</span>
+                            </div>
+                            <!-- <input name="filter-by-rate" type="range" min="0" max="5" value="0" class="filter-rate-range"
+                                onchange="this.title=this.value;app.onSetFilterBy({minRate: this.value})" /> -->
                         </label>
+                        <input type="hidden" class="star-rating-input" name="filter-by-rate" value="0">
                     </div>
                     <p>
                         Sort by:

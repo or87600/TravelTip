@@ -61,6 +61,23 @@
     margin-bottom: .5em;
 }
 
+.star-rating {
+    display: flex;
+    gap: 5px;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.star {
+    color: gray;
+    transition: color 0.3s ease;
+}
+
+.star.filled {
+    color: gold;
+}
+
+
 .pie {
     display: inline-block;
     width: 120px;
